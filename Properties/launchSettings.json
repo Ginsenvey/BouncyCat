@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BouncyCat (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "BouncyCat (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
