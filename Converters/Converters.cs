@@ -24,7 +24,27 @@ public partial class BooltoVariantConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+public sealed partial class BoolToVisibilityConverter : IValueConverter
+{
+    /// <summary>
+    /// Whether to invert the value.
+    /// </summary>
 
+    /// <inheritdoc/>
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        var vis = Visibility.Visible;
+        if (value is bool v)
+        {
+            vis = v ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        return vis;
+    }
+
+    /// <inheritdoc/>
+    public object ConvertBack(object value, Type targetType, object parameter, string language) => throw new NotImplementedException();
+}
 public sealed partial class BoolToVisibilityReverseConverter : IValueConverter
 {
     /// <summary>

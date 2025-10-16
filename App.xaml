@@ -13,6 +13,7 @@
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
             <local:BooltoVariantConverter x:Key="VariantConverter"></local:BooltoVariantConverter>
+            <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <local:BoolToVisibilityReverseConverter x:Key="BoolToVisibilityReverseConverter"/>
         </ResourceDictionary>
         

@@ -3,6 +3,7 @@ using BouncyCat.Services;
 using BouncyCat.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
 using System.Collections.ObjectModel;
 
 namespace BouncyCat.ViewModels;
@@ -19,6 +20,9 @@ public sealed partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     private NavigationItem? selectdItem;
+
+    [ObservableProperty]
+    private bool isLoading=true;
 
     [RelayCommand]
     public void ItemInvoke(string tag)
@@ -49,6 +53,12 @@ public sealed partial class MainViewModel : ObservableObject
             }
 
         }
+    }
+
+    [RelayCommand]
+    public async void InitializeData()
+    {
+
     }
 
     public MainViewModel(INavigationService nav) => _nav = nav;

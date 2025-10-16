@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -38,9 +39,9 @@ namespace BouncyCat.Views
             nav?.SetFrame(RootFrame);
             AddNavigationItems();
             nav?.NavigateTo(typeof(Discover));
-
+            
         }
-
+        
         private void AddNavigationItems()
         {
             ViewModel.MenuItems.Add(new NavigationItem { Name = "ึ๗าณ",IconSymbol=FluentIcons.Common.Symbol.Home,Tag="home" });

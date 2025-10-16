@@ -15,13 +15,23 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="48"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid x:Name="GridTitleBar">
-            <TextBlock  Text="BouncyCat" x:Name="de"  VerticalAlignment="Center" FontSize="15"  FontWeight="SemiBold" Margin="15,0,0,0"></TextBlock>
+        
+        <Grid x:Name="GridTitleBar" ColumnSpacing="15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="BouncyCat" x:Name="de"  VerticalAlignment="Center" FontSize="15"  FontWeight="SemiBold" Margin="15,0,0,0"></TextBlock>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Visibility="{Binding Path=ViewModel.IsLoading,Converter={StaticResource BoolToVisibilityConverter}}">
+                <ProgressRing IsActive="{x:Bind ViewModel.IsLoading}"  Width="18" Height="18"></ProgressRing>
+                <TextBlock Text="更新数据中···" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"></TextBlock>
+            </StackPanel>
         </Grid>
         <NavigationView  Grid.Row="1" PaneDisplayMode="Left" IsPaneToggleButtonVisible="False"  OpenPaneLength="74" IsBackButtonVisible="Collapsed" IsSettingsVisible="False"  x:Name="Navi"  CompactPaneLength="0" MenuItemsSource="{x:Bind ViewModel.MenuItems}" FooterMenuItemsSource="{x:Bind ViewModel.FooterItems}" ItemInvoked="Navi_ItemInvoked">
             <NavigationView.MenuItemTemplate>

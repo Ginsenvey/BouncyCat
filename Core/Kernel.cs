@@ -1,7 +1,9 @@
 ﻿using BouncyCat.Objects;
 using System;
+using System.ComponentModel;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace BouncyCat.Core;
 
@@ -18,7 +20,7 @@ public static class ApiScope
     /// 应用所需的数据库文件，缺省.db后缀。
     /// </summary>
     /// <remarks>需要检验MD5.</remarks>
-    public const string DataUrl = "http://e.haory.cn/e/e336/wenjian/WenJian";
+    public const string DataBaseUrl = "http://e.haory.cn/e/e336/wenjian/WenJian";
 
 }
 
@@ -154,5 +156,27 @@ public static class ValidationHelper
         {
             return "e:解析返回出错";
         }
+    }
+
+    /// <summary>
+    /// 安全提取持久化设置
+    /// </summary>
+    /// <param name="container"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static string GetKey(ApplicationDataContainer container,string key)
+    {
+        if (container.Values.TryGetValue(key, out var token))
+        {
+            if (token != null)
+            {
+                var _token = token.ToString();
+                if (!string.IsNullOrEmpty(_token))
+                {
+                    return _token;
+                }
+            }
+        }
+        return "0";
     }
 }
