@@ -7,13 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tool="using:CommunityToolkit.WinUI.Controls"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
     xmlns:obj="using:BouncyCat.Objects"
     xmlns:ic="using:FluentIcons.WinUI"
     xmlns:lab="using:CommunityToolkit.Labs.WinUI"
     xmlns:ry="using:Richasy.WinUIKernel.Share.Base"
     xmlns:vm="using:BouncyCat.ViewModels"
+    xmlns:base="using:Richasy.WinUIKernel.Share.Base"
+    Background="{ThemeResource DesktopAcrylicTransparentBrush}"
     mc:Ignorable="d">
-
 
     <SplitView x:Name="Wrapper" PanePlacement="Right" DisplayMode="Overlay" IsPaneOpen="False"  PaneBackground="Transparent">
         <SplitView.Pane>
@@ -30,16 +32,14 @@
                     <RowDefinition Height="12*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="{x:Bind ViewModel.FirstColumnWidth,Mode=OneWay}" x:Name="Fc"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="2*" x:Name="LeftColumn"></ColumnDefinition>
                     <ColumnDefinition Width="7*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <!-- 使用最小宽度作为sizer的绑定值-->
-                <ry:ColumnSplitter  Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" MaxColumnWidth="500" MinColumnWidth="320" ColumnWidth="{x:Bind Fc.MinWidth,Mode=TwoWay}" IsHideButtonEnabled="True" IsInvertDirection="False" IsEnabled="True" AlwaysShowButtonWhenCollapsed="True" IsHide="{x:Bind ViewModel.IsHided,Mode=TwoWay}"></ry:ColumnSplitter>
+                
                 <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="1" BorderThickness="1" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"></Border>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="搜索筛选" FontWeight="Bold" Margin="15,0,0,0"></TextBlock>
-                <Grid Grid.Row="1" Grid.Column="0" RowSpacing="10">
+                <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="搜索筛选" FontWeight="Bold" Margin="15,0,0,0" x:Name="Title"></TextBlock>
+                <Grid Grid.Row="1" Grid.Column="0" RowSpacing="10" x:Name="SectionArea">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"></RowDefinition>
                         <RowDefinition Height="1"></RowDefinition>
@@ -77,25 +77,36 @@
                     </ScrollViewer>
 
                 </Grid>
-                <ToggleButton Grid.Row="0" Grid.Column="2" x:Name="st" Checked="st_Checked" Content="开关" Margin="15,0,0,0"></ToggleButton>
-                <ComboBox Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,0,15,0" PlaceholderText="最近更新"></ComboBox>
-                <ScrollViewer Grid.Row="1" Grid.Column="2" >
-                    <ItemsRepeater  x:Name="GameList" ItemsSource="{x:Bind ViewModel.Games}" Margin="30" >
-                        <ItemsRepeater.Layout>
-                            <tool:StaggeredLayout ColumnSpacing="15" RowSpacing="20" ItemsStretch="Fill"></tool:StaggeredLayout>
-                        </ItemsRepeater.Layout>
-                        <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="obj:Game">
-                                <Button BorderThickness="0" CornerRadius="6" Padding="0">
-                                    
-                                    <Grid Width="260" Height="160">
-                                        <Image Source="/Assets/test.jpg" Stretch="UniformToFill"></Image>
-                                    </Grid>
-                                </Button>
-                            </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                    </ItemsRepeater>
-                </ScrollViewer>
+                <Grid Grid.Row="0" Grid.Column="2" x:Name="FilterArea">
+                    <ToggleButton  x:Name="st" Checked="st_Checked" Content="开关" Margin="15,0,0,0"></ToggleButton>
+                    <ComboBox  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,0,15,0" PlaceholderText="最近更新"></ComboBox>
+                </Grid>
+
+                <Grid Grid.Row="1" Grid.Column="2">
+                    <ScrollViewer  x:Name="ContentArea">
+                        <ItemsRepeater  x:Name="GameList" ItemsSource="{x:Bind ViewModel.Games}" Margin="30" >
+                            <ItemsRepeater.Layout>
+                                <tool:StaggeredLayout ColumnSpacing="15" RowSpacing="20" ItemsStretch="Fill"></tool:StaggeredLayout>
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="obj:Game">
+                                    <Button BorderThickness="0" CornerRadius="6" Padding="0">
+                                        <Grid Width="260" Height="160">
+                                            <Image Source="{x:Bind Url,Mode=OneWay}" Stretch="UniformToFill"></Image>
+                                            <TextBlock  Text="{x:Bind Name,Mode=OneWay}" Foreground="White" FontWeight="Bold"  VerticalAlignment="Bottom" Margin="10"></TextBlock>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </ScrollViewer>
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Stretch"  x:Name="Splitter">
+                        <Rectangle Width="6"  Fill="Transparent" />
+                        <Border Width="1"  HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="{ThemeResource DividerStrokeColorDefaultBrush}"/>
+                        <tool:PropertySizer x:Name="Sizer" Visibility="{x:Bind ViewModel.SplitterVisibility,Mode=OneWay}" HorizontalAlignment="Center" Binding="{x:Bind LeftColumn.MinWidth,Mode=TwoWay}" Minimum="280" Maximum="400"  IsFocusEngagementEnabled="False" IsTabStop="False" />
+                        <base:VisibilityToggleButton Margin="0,0,-32,0" VerticalAlignment="Stretch" CornerRadius="0,6,6,0" AlwaysShowWhenCollapsed="True" IsEnabled="True" ShowTip="折叠" HideTip="展开" Click="Btn_Click" />
+                    </Grid>
+                </Grid>
 
             </Grid>
         </SplitView.Content>

@@ -5,13 +5,21 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using System.Collections.ObjectModel;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace BouncyCat.ViewModels;
 
 public sealed partial class MainViewModel : ObservableObject
 {
+    public MainViewModel(INavigationService nav, IUpdateService updateService)
+    {
+        _nav = nav;
+        _updateService = updateService;
+    }
+    public static HttpClient client=new();
     private readonly INavigationService _nav;
-
+    private readonly IUpdateService _updateService;
     [ObservableProperty]
     private ObservableCollection<NavigationItem> menuItems = new();
 
@@ -56,12 +64,15 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public async void InitializeData()
+    public async Task InitializeData()
     {
-
+        //string r=await _updateService.UpdateAsync();
+        //System.Diagnostics.Debug.WriteLine(r);
+        await Task.Delay(1500);
+        IsLoading = false;
     }
 
-    public MainViewModel(INavigationService nav) => _nav = nav;
+    
 
     [RelayCommand]
     private void GoBack() => _nav.GoBack();

@@ -19,6 +19,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -43,8 +44,13 @@ namespace BouncyCat
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            //对于未打包的WinUI应用，需要用 Environment.GetFolderPath 来获取标准本地应用程序数据路径.
+            //string path = ApplicationData.Current.LocalCacheFolder.Path + "/" + "Data.db";
+            string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string path = System.IO.Path.Combine(localAppDataPath, "BouncyCat", "Data.db");
             Services = new ServiceCollection()
             .AddSingleton<INavigationService, NavigationService>()
+            .AddSingleton<IUpdateService>(provider => new UpdateService(path))
             .AddTransient<MainViewModel>()
             .AddTransient<DiscoverViewModel>()
             .BuildServiceProvider();

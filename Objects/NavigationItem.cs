@@ -46,9 +46,9 @@ public partial class Game : ObservableObject
     [ObservableProperty]
     private string url;
 
-    [ObservableProperty]
-    private int id;
 
+    [ObservableProperty]
+    private string name;
 }
 
 public class UpdateInfo
@@ -58,4 +58,13 @@ public class UpdateInfo
     public required string DataBaseVersion { get; set; }
     public required string MD5 { get; set; }
     public bool Status { get; set; }
+}
+public class Data
+{
+    public int Id { get; set; }
+    public string Name1 { get; set; }
+    public string Name2 { get; set; }
+    public string BH { get; set; }
+
+    public string MageA { get; set; }
 }

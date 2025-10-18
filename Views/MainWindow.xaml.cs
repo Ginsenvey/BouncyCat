@@ -39,7 +39,7 @@ namespace BouncyCat.Views
             nav?.SetFrame(RootFrame);
             AddNavigationItems();
             nav?.NavigateTo(typeof(Discover));
-            
+            ViewModel.InitializeData();
         }
         
         private void AddNavigationItems()

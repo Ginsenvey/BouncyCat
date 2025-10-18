@@ -18,13 +18,11 @@ public interface IUpdateService
 
 public class UpdateService : IUpdateService
 {
-    private readonly HttpClient _client;
+    private static HttpClient _client=new();
     private readonly string _path;
     private string _hash="0";
-    public UpdateService(HttpClient client,string path)
-
+    public UpdateService(string path)
     {
-        _client = client;
         _path = path;
     }
 
@@ -119,7 +117,7 @@ public class UpdateService : IUpdateService
             // 发送GET请求并获取响应流
             HttpResponseMessage response = await _client.GetAsync(url);
             response.EnsureSuccessStatusCode();
-
+            System.Diagnostics.Debug.WriteLine("正在下载更新");
             // 将响应流写入文件
             using (Stream contentStream = await response.Content.ReadAsStreamAsync())
             using (FileStream fileStream = File.Create(_path))
@@ -127,23 +125,31 @@ public class UpdateService : IUpdateService
                 await contentStream.CopyToAsync(fileStream);
             }
             //检查覆写后的文件MD5是否与在线数据一致。一致则将该哈希记录。否则返回false.
-            try
+            if (File.Exists(_path))
             {
-                if (File.Exists(_path))
+                System.Diagnostics.Debug.WriteLine("文件存在");
+                string md5 = FileHashHelper.GetFileMD5(_path);
+                if (md5 == _hash)
                 {
-                    string md5 = FileHashHelper.GetFileMD5(_path);
-                    if (md5 == _hash)
-                    {
-                        ApplicationData.Current.LocalSettings.Values["DataBaseHash"] = md5;
-                        return true;
-                    }
+                    ApplicationData.Current.LocalSettings.Values["DataBaseHash"] = md5;
+                    return true;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("哈希不一致");
+                    System.Diagnostics.Debug.WriteLine(md5);
+                    System.Diagnostics.Debug.WriteLine(_hash);
+                    System.Diagnostics.Debug.WriteLine(_path);
                 }
             }
-            catch{ }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("文件不存在");
+            }
         }
-        catch (HttpRequestException e)
+        catch (Exception e)
         {
-            System.Diagnostics.Debug.WriteLine($"请求错误: {e.Message}");
+            System.Diagnostics.Debug.WriteLine($"错误: {e.Message}");
         }
         return false;
     }

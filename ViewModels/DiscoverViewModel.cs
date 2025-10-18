@@ -1,8 +1,13 @@
-﻿using BouncyCat.Objects;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml;
-using System.Collections.ObjectModel;
+﻿using BouncyCat.Messengers;
+using BouncyCat.Objects;
 using BouncyCat.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Xaml;
+using SqlSugar;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 namespace BouncyCat.ViewModels;
 
 public sealed partial class DiscoverViewModel : ObservableObject
@@ -14,16 +19,11 @@ public sealed partial class DiscoverViewModel : ObservableObject
     private ObservableCollection<Game> games = new();
 
     [ObservableProperty]
-    private bool _isHided;
-
-    // 第一列的宽度属性
-    [ObservableProperty]
-    private GridLength firstColumnWidth = new(320);
-
-    partial void OnIsHidedChanged(bool value)
+    private Visibility splitterVisibility = Visibility.Visible;
+    [RelayCommand]
+    public void Expanding(bool value)
     {
-        FirstColumnWidth = value ? new GridLength(0) : new GridLength(320);
-
+        SplitterVisibility=value?Visibility.Collapsed:Visibility.Visible;
     }
 
     public DiscoverViewModel()
@@ -37,11 +37,17 @@ public sealed partial class DiscoverViewModel : ObservableObject
         {
             Sections.Add(new GameSection { Name="像素",Count = 10038});
         }
-        for (int i = 0; i < 16; i++)
+        var db = new SqlSugarClient(new ConnectionConfig()
         {
-            Games.Add(new Game { Url = "像素", Id = 10038 });
+            ConnectionString = "Data Source=C:\\Users\\Ansherly\\Downloads\\WenJian.db", // 数据库文件路径
+            DbType = DbType.Sqlite, // 数据库类型
+            IsAutoCloseConnection = true // 是否自动关闭连接
+        });
+        List<Data> userList = db.Queryable<Data>().ToList();
+        foreach(Data data in userList)
+        {
+            Games.Add(new Game { Name = data.Name1, Url = data.MageA });
         }
-
     }
 
 
