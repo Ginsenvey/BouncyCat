@@ -72,6 +72,15 @@ namespace BouncyCat.Views
            
 
         }
+
+        private void RootSerchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var Text = sender.Text.ToLower();
+                ViewModel.ExecuteSearch(Text);
+            }
+        }
     }
 
     public partial class BooltoVariantConverter : IValueConverter
@@ -93,4 +102,24 @@ namespace BouncyCat.Views
             throw new NotImplementedException();
         }
     }
+
+    public partial class SearchResultSelector : DataTemplateSelector
+    {
+        public DataTemplate GroupTemplate { get; set; }
+        public DataTemplate ItemTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item)
+        {
+            if (item is SearchGroup g)
+            {
+                return GroupTemplate;
+            }
+            else
+            {
+                return ItemTemplate;
+            }
+        }
+    }
+
+
 }

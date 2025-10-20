@@ -4,7 +4,11 @@ using BouncyCat.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using SqlSugar;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -16,10 +20,18 @@ public sealed partial class MainViewModel : ObservableObject
     {
         _nav = nav;
         _updateService = updateService;
+        var db = new SqlSugarClient(new ConnectionConfig()
+        {
+            ConnectionString = "Data Source=C:\\Users\\Ansherly\\Downloads\\WenJian.db", // 数据库文件路径
+            DbType = DbType.Sqlite, // 数据库类型
+            IsAutoCloseConnection = true // 是否自动关闭连接
+        });
+        GameList = db.Queryable<Data>().ToList();
     }
     public static HttpClient client=new();
     private readonly INavigationService _nav;
     private readonly IUpdateService _updateService;
+    public List<Data> GameList { get; set; }
     [ObservableProperty]
     private ObservableCollection<NavigationItem> menuItems = new();
 
@@ -28,6 +40,10 @@ public sealed partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     private NavigationItem? selectdItem;
+
+    [ObservableProperty]
+    private ObservableCollection<SearchIndicator> results=new() ;
+    
 
     [ObservableProperty]
     private bool isLoading=true;
@@ -72,7 +88,21 @@ public sealed partial class MainViewModel : ObservableObject
         IsLoading = false;
     }
 
-    
+    [RelayCommand]
+    public void ExecuteSearch(string text)
+    {
+        Results.Clear();
+        var groups = GameList.Where(g=>g.Name1.Contains(text)).GroupBy(g => g.BiaoQ);
+        foreach (var group in groups)
+        {
+            Results.Add(new SearchGroup { Name = group.Key });
+            foreach (var result in group)
+            {
+                Results.Add(new SearchResult { Title = result.Name1, Type = result.BiaoQ,Cover=result.MageA });
+            }
+        }
+        
+    }
 
     [RelayCommand]
     private void GoBack() => _nav.GoBack();

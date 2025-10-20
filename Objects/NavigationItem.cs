@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 namespace BouncyCat.Objects;
@@ -22,11 +23,33 @@ public partial class NavigationItem : ObservableObject
 
     [ObservableProperty]
     public bool isSelected;
-
     
 }
 
+public class SearchIndicator : ObservableObject { }
+public partial class SearchResult:SearchIndicator
+{
+    [ObservableProperty]
+    private string title;
+    [ObservableProperty]
+    private string type;
+    [ObservableProperty]
+    private string cover;
+    public override string ToString()
+    {
+        return Title;
+    }
+}
+public partial class SearchGroup : SearchIndicator
+{
+    [ObservableProperty]
+    private string name;
+}
 
+public enum BouncyType:int
+{
+    Game=1,Anime=2,Movie=3
+}
 
 public partial class GameSection : ObservableObject
 {
@@ -40,6 +63,7 @@ public partial class GameSection : ObservableObject
     private bool pinned;
    
 }
+
 
 public partial class Game : ObservableObject
 {
@@ -67,4 +91,5 @@ public class Data
     public string BH { get; set; }
 
     public string MageA { get; set; }
+    public string BiaoQ {  get; set; }
 }
