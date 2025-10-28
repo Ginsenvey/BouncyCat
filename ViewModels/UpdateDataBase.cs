@@ -66,7 +66,6 @@ public class UpdateService : IUpdateService
     /// <summary>
     /// 检查是否应该更新数据
     /// </summary>
-    /// <param name="path">本地数据库地址</param>
     ///<remarks>当本地配置中md5返回0时，认为是首次使用，返回false;非0时，与现存文件哈希相匹配。</remarks>
     public async Task<string>ShouldUpdate()
     {

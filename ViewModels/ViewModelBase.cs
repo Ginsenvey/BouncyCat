@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SqlSugar;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -20,13 +21,15 @@ public sealed partial class MainViewModel : ObservableObject
     {
         _nav = nav;
         _updateService = updateService;
+        string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        string path = System.IO.Path.Combine(localAppDataPath, "BouncyCat", "Data.db");
         var db = new SqlSugarClient(new ConnectionConfig()
         {
-            ConnectionString = "Data Source=C:\\Users\\Ansherly\\Downloads\\WenJian.db", // 数据库文件路径
+            ConnectionString = $"Data Source={path}", // 数据库文件路径
             DbType = DbType.Sqlite, // 数据库类型
             IsAutoCloseConnection = true // 是否自动关闭连接
         });
-        GameList = db.Queryable<Data>().ToList();
+        GameList=db.Queryable<Data>().ToList();
     }
     public static HttpClient client=new();
     private readonly INavigationService _nav;
@@ -47,6 +50,9 @@ public sealed partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     private bool isLoading=true;
+
+    [ObservableProperty]
+    private string ex = "无异常";
 
     [RelayCommand]
     public void ItemInvoke(string tag)
@@ -89,17 +95,48 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void ExecuteSearch(string text)
+    public async Task ExecuteSearch(string text)
     {
-        Results.Clear();
-        var groups = GameList.Where(g=>g.Name1.Contains(text)).GroupBy(g => g.BiaoQ);
-        foreach (var group in groups)
+        try
         {
-            Results.Add(new SearchGroup { Name = group.Key });
-            foreach (var result in group)
+            Results.Clear();
+
+            if (string.IsNullOrWhiteSpace(text))
+                return;
+
+            if (GameList == null)
             {
-                Results.Add(new SearchResult { Title = result.Name1, Type = result.BiaoQ,Cover=result.MageA });
+                Ex = "数据未加载";
+                return;
             }
+
+            // 在后台线程执行查询和分组，减少 UI 线程压力
+            var groups = await Task.Run(() =>
+            {
+                return GameList
+                    .Where(g => !string.IsNullOrEmpty(g.Name1) 
+                                && g.Name1.Contains(text, StringComparison.OrdinalIgnoreCase))
+                    .GroupBy(g => g.BiaoQ)
+                    .ToList();
+            });
+
+            foreach (var group in groups)
+            {
+                Results.Add(new SearchGroup { Name = group.Key ?? string.Empty });
+                foreach (var result in group)
+                {
+                    Results.Add(new SearchResult
+                    {
+                        Title = result.Name1 ?? string.Empty,
+                        Type = result.BiaoQ ?? string.Empty,
+                        Cover = result.MageA ?? string.Empty
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Ex = ex.Message;
         }
         
     }

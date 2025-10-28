@@ -62,5 +62,24 @@ namespace BouncyCat.Views
             ViewModel.Expanding(Expanded);
             Expanded = !Expanded;
         }
+        public int history;
+        private void GameList_Loaded(object sender, RoutedEventArgs e)
+        {
+            GameList.ElementPrepared += (s, args) =>
+            {
+                if (GameList.ItemsSource != null)
+                {
+                    int currentIndex = args.Index;
+                    if (currentIndex > 0 && (currentIndex + 1) % 20 == 0 && currentIndex > history)
+                    {
+                        history = currentIndex;
+                        int page = (currentIndex + 1) / 20 + 1; // 正确的页码计算
+                        var dq = this.DispatcherQueue;
+                        // 延后到消息队列中执行，避免在布局期间修改集合
+                        dq?.TryEnqueue(() => ViewModel.LoadPage(page));
+                    }
+                }
+            };
+        }
     }
 }

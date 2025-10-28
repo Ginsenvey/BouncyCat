@@ -33,36 +33,8 @@
                 <TextBlock  Text="BouncyCat" x:Name="de"  VerticalAlignment="Center" FontSize="15"  FontWeight="SemiBold" ></TextBlock>
                 <ProgressRing  IsActive="{x:Bind ViewModel.IsLoading,Mode=OneWay}"  Width="18" Height="18"></ProgressRing>
             </StackPanel>
-
-            <AutoSuggestBox Grid.Column="1" Height="36" MaxWidth="400" MinWidth="200" QueryIcon="Find" HorizontalAlignment="Stretch" UpdateTextOnSelect="False" x:Name="RootSerchBox" TextChanged="RootSerchBox_TextChanged" ItemsSource="{x:Bind ViewModel.Results,Mode=OneWay}" >
-                <AutoSuggestBox.Resources>
-                    <DataTemplate x:Key="ResultTemplate" x:DataType="obj:SearchResult">
-                        <Grid ColumnSpacing="15" Margin="0,10,0,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Border Width="35" Height="35" CornerRadius="4">
-                                <Image Source="{x:Bind Cover,Mode=OneWay}" Stretch="UniformToFill"></Image>
-                            </Border>
-                            <TextBlock Grid.Column="1" Text="{x:Bind Title,Mode=OneWay}" VerticalAlignment="Center"></TextBlock>
-                        </Grid>
-                    </DataTemplate>
-                    <DataTemplate x:Key="GroupTemplate" x:DataType="obj:SearchGroup">
-                        <TextBlock Text="{x:Bind Name,Mode=OneWay}"  FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"></TextBlock>
-                    </DataTemplate>
-                
-                </AutoSuggestBox.Resources>
-                
-                <AutoSuggestBox.ItemTemplateSelector>
-                    <view:SearchResultSelector GroupTemplate="{StaticResource GroupTemplate}" ItemTemplate="{StaticResource ResultTemplate}"></view:SearchResultSelector>
-                </AutoSuggestBox.ItemTemplateSelector>
-                <AutoSuggestBox.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        
-                    </Style>
-                </AutoSuggestBox.ItemContainerStyle>
-            </AutoSuggestBox>
+            <!--搜索框项容器的类型只能是ListViewItem-->
+            <AutoSuggestBox Grid.Column="1" Height="36" MaxWidth="400" MinWidth="200" QueryIcon="Find" HorizontalAlignment="Stretch" UpdateTextOnSelect="False" x:Name="RootSerchBox" TextChanged="RootSerchBox_TextChanged" ItemsSource="{x:Bind ViewModel.Results,Mode=OneWay}" ItemTemplateSelector="{StaticResource SearchResultSelector}"></AutoSuggestBox>
         </Grid>
         <NavigationView  Grid.Row="1" PaneDisplayMode="Left" IsPaneToggleButtonVisible="False"  OpenPaneLength="74" IsBackButtonVisible="Collapsed" IsSettingsVisible="False"  x:Name="Navi"  CompactPaneLength="0" MenuItemsSource="{x:Bind ViewModel.MenuItems}" FooterMenuItemsSource="{x:Bind ViewModel.FooterItems}" ItemInvoked="Navi_ItemInvoked">
             <NavigationView.MenuItemTemplate>

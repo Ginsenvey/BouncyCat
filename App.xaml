@@ -3,7 +3,10 @@
     x:Class="BouncyCat.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:obj="using:BouncyCat.Objects"
+    xmlns:view="using:BouncyCat.Views"
     xmlns:local="using:BouncyCat">
+    
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -15,6 +18,23 @@
             <local:BooltoVariantConverter x:Key="VariantConverter"></local:BooltoVariantConverter>
             <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <local:BoolToVisibilityReverseConverter x:Key="BoolToVisibilityReverseConverter"/>
+            <!--此处DataTemplate使用x:bind会报错-->
+            <DataTemplate x:Key="ResultTemplate"  >
+                <Grid ColumnSpacing="15" Margin="0,10,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Border Width="35" Height="35" CornerRadius="4">
+                        <Image Source="{Binding Cover,Mode=OneWay}" Stretch="UniformToFill"></Image>
+                    </Border>
+                    <TextBlock Grid.Column="1" Text="{Binding Title,Mode=OneWay}" VerticalAlignment="Center"></TextBlock>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Key="GroupTemplate" >
+                <TextBlock Text="{Binding Name,Mode=OneWay}"  FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"></TextBlock>
+            </DataTemplate>
+            <view:SearchResultSelector x:Key="SearchResultSelector" GroupTemplate="{StaticResource GroupTemplate}" ItemTemplate="{StaticResource ResultTemplate}"></view:SearchResultSelector>
         </ResourceDictionary>
         
     </Application.Resources>

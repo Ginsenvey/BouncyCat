@@ -14,6 +14,7 @@
     xmlns:ry="using:Richasy.WinUIKernel.Share.Base"
     xmlns:vm="using:BouncyCat.ViewModels"
     xmlns:base="using:Richasy.WinUIKernel.Share.Base"
+    xmlns:blur="using:BlurGradient"
     Background="{ThemeResource DesktopAcrylicTransparentBrush}"
     mc:Ignorable="d">
 
@@ -84,18 +85,33 @@
 
                 <Grid Grid.Row="1" Grid.Column="2">
                     <ScrollViewer  x:Name="ContentArea">
-                        <ItemsRepeater  x:Name="GameList" ItemsSource="{x:Bind ViewModel.Games}" Margin="30" >
+                        <ItemsRepeater  x:Name="GameList" ItemsSource="{x:Bind ViewModel.Games}" Margin="30" Loaded="GameList_Loaded">
                             <ItemsRepeater.Layout>
                                 <tool:StaggeredLayout ColumnSpacing="15" RowSpacing="20" ItemsStretch="Fill"></tool:StaggeredLayout>
                             </ItemsRepeater.Layout>
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="obj:Game">
-                                    <Button BorderThickness="0" CornerRadius="6" Padding="0">
-                                        <Grid Width="260" Height="160">
-                                            <Image Source="{x:Bind Url,Mode=OneWay}" Stretch="UniformToFill"></Image>
+                                    <Button BorderThickness="0" CornerRadius="6" Padding="0" Width="260" Height="160">
+                                        <Grid CornerRadius="6">
+                                            <blur:LinearGradientBlurPanel StartPoint="0,1" EndPoint="0,0.1" MaxBlurAmount="6" MinBlurAmount="0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="120"></RowDefinition>
+                                                    <RowDefinition Height="Auto"></RowDefinition>
+                                                </Grid.RowDefinitions>
+                                                <Image Grid.Row="0" Source="{x:Bind Url,Mode=OneWay}" Stretch="Fill" Height="120"></Image>
+                                                <Image Grid.Row="1" Source="{x:Bind Url,Mode=OneWay}" Stretch="Fill" RenderTransformOrigin="0.5,0.5" Height="110">
+                                                    <Image.RenderTransform>
+                                                        <TransformGroup>
+                                                            <ScaleTransform ScaleY="-1" />
+                                                            <TranslateTransform Y="0" />
+                                                        </TransformGroup>
+                                                    </Image.RenderTransform>
+                                                </Image>
+                                            </blur:LinearGradientBlurPanel>
                                             <TextBlock  Text="{x:Bind Name,Mode=OneWay}" Foreground="White" FontWeight="Bold"  VerticalAlignment="Bottom" Margin="10"></TextBlock>
                                         </Grid>
                                     </Button>
+                                   
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>

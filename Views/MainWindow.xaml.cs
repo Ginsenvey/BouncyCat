@@ -40,6 +40,7 @@ namespace BouncyCat.Views
             AddNavigationItems();
             nav?.NavigateTo(typeof(Discover));
             ViewModel.InitializeData();
+            
         }
         
         private void AddNavigationItems()
@@ -66,6 +67,9 @@ namespace BouncyCat.Views
                     case "section":
                         nav?.NavigateTo(typeof(Discover));
                         break;
+                    case "setting":
+                        nav?.NavigateTo(typeof(Settings));
+                        break;
                 }
             }
                 
@@ -73,12 +77,13 @@ namespace BouncyCat.Views
 
         }
 
-        private void RootSerchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        private async void RootSerchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 var Text = sender.Text.ToLower();
-                ViewModel.ExecuteSearch(Text);
+                await ViewModel.ExecuteSearch(Text);
+
             }
         }
     }
@@ -105,8 +110,8 @@ namespace BouncyCat.Views
 
     public partial class SearchResultSelector : DataTemplateSelector
     {
-        public DataTemplate GroupTemplate { get; set; }
-        public DataTemplate ItemTemplate { get; set; }
+        public  DataTemplate GroupTemplate { get; set; }
+        public  DataTemplate ItemTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item)
         {
