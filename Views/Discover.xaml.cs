@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
@@ -34,14 +35,10 @@ namespace BouncyCat.Views
         {
             InitializeComponent();
             ViewModel = App.Services.GetRequiredService<DiscoverViewModel>();
+            WeakReferenceMessenger.Default.Register<string>(this, (recipient, message) => {
+                ViewModel.ExecuteSearchByName(message);
+            });
         }
-
-        private void st_Checked(object sender, RoutedEventArgs e)
-        {
-            Wrapper.IsPaneOpen = !Wrapper.IsPaneOpen;
-        }
-
-
        
 
         private void Btn_Click(object sender, EventArgs e)
@@ -80,6 +77,40 @@ namespace BouncyCat.Views
                     }
                 }
             };
+        }
+
+        private void RangeSelector_ValueChanged(object sender, CommunityToolkit.WinUI.Controls.RangeChangedEventArgs e)
+        {
+            ViewModel.ApplyFilters(1);
+        }
+
+        private void SectionPicker_Checked(object sender, RoutedEventArgs e)
+        {
+            ViewModel.UpdateSectionPicker();
+        }
+
+        private void SectionPicker_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ViewModel?.UpdateSectionPicker();
+        }
+
+        private void ContentCard_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.OpenInfoPane();
+        }
+
+        private void OrderController_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.ApplyFilters(1);
+        }
+
+        private void Image_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            var i = sender as Image;
+            if (i != null)
+            {
+                i.Source = new BitmapImage(new Uri("ms-appx:///Assets/fail.png"));
+            }
         }
     }
 }

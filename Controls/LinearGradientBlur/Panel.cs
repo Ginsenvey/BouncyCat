@@ -1,152 +1,162 @@
 ﻿using LinearGradientBlurBrush;
+using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.UI;
-namespace BlurGradient
+using Windows.UI; 
+using System;  
+
+namespace LinearGradientBlurEffect
 {
     public partial class LinearGradientBlurPanel : Grid
     {
+        private readonly object locker = new();
+        private LinearGradientBlurHelper? helper;
+        private bool isDisposed = false;  
+
         public LinearGradientBlurPanel()
         {
-            HorizontalAlignment = HorizontalAlignment.Stretch;
-            VerticalAlignment = VerticalAlignment.Stretch;
-
             this.Loaded += OnLoaded;
+            this.Unloaded += OnUnloaded;
         }
 
-        private object locker = new object();
-        private LinearGradientBlurHelperMUC? helper;
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            isDisposed = false;
+            EnsureHelper();
+        }
 
-        private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             lock (locker)
             {
-                if (IsLoaded)
+                if (helper != null)
                 {
-                    EnsureHelper();
+                    ElementCompositionPreview.SetElementChildVisual(this, null);
+                    helper.Dispose();
+                    helper = null;
                 }
+                isDisposed = true;  
             }
         }
 
         private static void OnDependencyPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is LinearGradientBlurPanel sender && !Equals(e.NewValue, e.OldValue))
+            if (d is not LinearGradientBlurPanel sender) return;
+             
+            if (Equals(e.NewValue, e.OldValue)) return;
+             
+            if (!sender.IsLoaded || sender.helper is null)
             {
-                if (sender.helper != null)
-                {
-                    if (e.Property == MaxBlurAmountProperty) sender.helper.MaxBlurAmount = Convert.ToSingle(e.NewValue);
-                    if (e.Property == MinBlurAmountProperty) sender.helper.MinBlurAmount = Convert.ToSingle(e.NewValue);
-                    if (e.Property == TintColorProperty) sender.helper.TintColor = (Color)e.NewValue;
-                    if (e.Property == StartPointProperty) sender.helper.StartPoint = ((Point)e.NewValue).ToVector2();
-                    if (e.Property == EndPointProperty) sender.helper.EndPoint = ((Point)e.NewValue).ToVector2();
-                }
+                return;
+            }
+             
+            var property = e.Property;
+            if (property == MaxBlurAmountProperty)
+            {
+                sender.helper.MaxBlurAmount = (float)(double)e.NewValue;
+            }
+            else if (property == TintColorProperty)
+            {
+                sender.helper.TintColor = (Color)e.NewValue;
+            }
+            else if (property == StartPointProperty)
+            {
+                sender.helper.StartPoint = ((Point)e.NewValue).ToVector2();
+            }
+            else if (property == EndPointProperty)
+            {
+                sender.helper.EndPoint = ((Point)e.NewValue).ToVector2();
             }
         }
 
-        private LinearGradientBlurHelperMUC EnsureHelper()
-        {
-            if (helper == null)
-            {
-                lock (locker)
-                {
-                    if (helper == null)
-                    {
-                        var compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-                        helper = new LinearGradientBlurHelperMUC(compositor)
-                        {
-                            MaxBlurAmount = (float)MaxBlurAmount,
-                            MinBlurAmount = (float)MinBlurAmount,
-                            TintColor = (Color)TintColor,
-                            StartPoint = StartPoint.ToVector2(),
-                            EndPoint = EndPoint.ToVector2(),
-                        };
-                        ElementCompositionPreview.SetElementChildVisual(this, helper.RootVisual);
-                    }
-                }
-            }
+        private LinearGradientBlurHelper? EnsureHelper()
+        { 
+            if (helper is not null) return helper;
 
+            lock (locker)
+            {
+                if (helper is not null) return helper;
+                 
+                if (isDisposed) return null;
+
+                var visual = ElementCompositionPreview.GetElementVisual(this);
+                if (visual is null)
+                { 
+                    return null;
+                }
+
+                var compositor = visual.Compositor;
+
+                var newHelper = new LinearGradientBlurHelper(compositor)
+                {
+                    MaxBlurAmount = (float)MaxBlurAmount,
+                    TintColor = TintColor,
+                    StartPoint = StartPoint.ToVector2(),
+                    EndPoint = EndPoint.ToVector2(),
+                };
+
+                ElementCompositionPreview.SetElementChildVisual(this, newHelper.RootVisual);
+                helper = newHelper;
+            }
             return helper;
         }
 
-        public double MaxBlurAmount
+        #region Dependency Properties
+         
+        public double MaxBlurAmount { get => (double)GetValue(MaxBlurAmountProperty); set => SetValue(MaxBlurAmountProperty, value); }
+        public static readonly DependencyProperty MaxBlurAmountProperty = DependencyProperty.Register(nameof(MaxBlurAmount), typeof(double), typeof(LinearGradientBlurPanel), new PropertyMetadata(16.0d, OnDependencyPropertyChanged));
+
+        public Color TintColor { get => (Color)GetValue(TintColorProperty); set => SetValue(TintColorProperty, value); }
+        public static readonly DependencyProperty TintColorProperty = DependencyProperty.Register(nameof(TintColor), typeof(Color), typeof(LinearGradientBlurPanel), new PropertyMetadata(Colors.Transparent, OnDependencyPropertyChanged));
+
+        public Point StartPoint { get => (Point)GetValue(StartPointProperty); set => SetValue(StartPointProperty, value); }
+        public static readonly DependencyProperty StartPointProperty = DependencyProperty.Register(nameof(StartPoint), typeof(Point), typeof(LinearGradientBlurPanel), new PropertyMetadata(new Point(0, 1), OnDependencyPropertyChanged));
+
+        public Point EndPoint { get => (Point)GetValue(EndPointProperty); set => SetValue(EndPointProperty, value); }
+        public static readonly DependencyProperty EndPointProperty = DependencyProperty.Register(nameof(EndPoint), typeof(Point), typeof(LinearGradientBlurPanel), new PropertyMetadata(new Point(0, 0), OnDependencyPropertyChanged));
+
+        #endregion
+
+        #region Composition Animation Methods
+         
+        private void ThrowIfDisposed()
         {
-            get { return (double)GetValue(MaxBlurAmountProperty); }
-            set { SetValue(MaxBlurAmountProperty, value); }
+            if (isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(LinearGradientBlurPanel), "The panel has been unloaded and its composition resources disposed.");
+            }
         }
 
-        public static readonly DependencyProperty MaxBlurAmountProperty =
-            DependencyProperty.Register("MaxBlurAmount", typeof(double), typeof(LinearGradientBlurPanel), new PropertyMetadata(64d, OnDependencyPropertyChanged));
+        public void StartMaxBlurAmountAnimation(CompositionAnimation animation) => StartHelperCompositionAnimation(nameof(MaxBlurAmount), animation);
+        public void StopMaxBlurAmountAnimation() => StopHelperCompositionAnimation(nameof(MaxBlurAmount));
 
-        public double MinBlurAmount
-        {
-            get { return (double)GetValue(MinBlurAmountProperty); }
-            set { SetValue(MinBlurAmountProperty, value); }
-        }
+        public void StartStartPointAnimation(CompositionAnimation animation) => StartHelperCompositionAnimation(nameof(StartPoint), animation);
+        public void StopStartPointAnimation() => StopHelperCompositionAnimation(nameof(StartPoint));
 
-        public static readonly DependencyProperty MinBlurAmountProperty =
-            DependencyProperty.Register("MinBlurAmount", typeof(double), typeof(LinearGradientBlurPanel), new PropertyMetadata(0.5d, OnDependencyPropertyChanged));
-
-        public Color TintColor
-        {
-            get { return (Color)GetValue(TintColorProperty); }
-            set { SetValue(TintColorProperty, value); }
-        }
-
-        public static readonly DependencyProperty TintColorProperty =
-            DependencyProperty.Register("TintColor", typeof(Color), typeof(LinearGradientBlurPanel), new PropertyMetadata(Color.FromArgb(0, 0, 0, 0), OnDependencyPropertyChanged));
-
-        public Point StartPoint
-        {
-            get { return (Point)GetValue(StartPointProperty); }
-            set { SetValue(StartPointProperty, value); }
-        }
-
-        public static readonly DependencyProperty StartPointProperty =
-            DependencyProperty.Register("StartPoint", typeof(Point), typeof(LinearGradientBlurPanel), new PropertyMetadata(new Point(0, 0), OnDependencyPropertyChanged));
-
-        public Point EndPoint
-        {
-            get { return (Point)GetValue(EndPointProperty); }
-            set { SetValue(EndPointProperty, value); }
-        }
-
-        public static readonly DependencyProperty EndPointProperty =
-            DependencyProperty.Register("EndPoint", typeof(Point), typeof(LinearGradientBlurPanel), new PropertyMetadata(new Point(0, 1), OnDependencyPropertyChanged));
-
-        public void StartMaxBlurAmountAnimation(CompositionAnimation animation) => StartHelperCompositionAnimation("MaxBlurAmount", animation);
-        public void StopMaxBlurAmountAnimation() => StopHelperCompositionAnimation("MaxBlurAmount");
-
-        public void StartMinBlurAmountAnimation(CompositionAnimation animation) => StartHelperCompositionAnimation("MinBlurAmount", animation);
-        public void StopMinBlurAmountAnimation() => StopHelperCompositionAnimation("MinBlurAmount");
-
-        public void StartStartPointAnimation(CompositionAnimation animation) => StartHelperCompositionAnimation("StartPoint", animation);
-        public void StopStartPointAnimation() => StopHelperCompositionAnimation("StartPoint");
-
-        public void StartEndPointAnimation(CompositionAnimation animation) => StartHelperCompositionAnimation("EndPoint", animation);
-        public void StopEndPointAnimation() => StopHelperCompositionAnimation("EndPoint");
-
+        public void StartEndPointAnimation(CompositionAnimation animation) => StartHelperCompositionAnimation(nameof(EndPoint), animation);
+        public void StopEndPointAnimation() => StopHelperCompositionAnimation(nameof(EndPoint));
 
         private void StartHelperCompositionAnimation(string propertyName, CompositionAnimation animation)
         {
-            EnsureHelper().CompositionProperties.StartAnimation(propertyName, animation);
+            ThrowIfDisposed();
+            EnsureHelper()?.CompositionProperties.StartAnimation(propertyName, animation);
         }
 
         private void StopHelperCompositionAnimation(string propertyName)
         {
-            var helper = this.helper;
-            if (helper == null) return;
-
-            helper.CompositionProperties.StopAnimation(propertyName);
+            ThrowIfDisposed(); 
+            helper?.CompositionProperties.StopAnimation(propertyName);
         }
+
+        #endregion
+    }
+     
+    internal static class PointExtensions
+    {
+        public static Vector2 ToVector2(this Point p) => new((float)p.X, (float)p.Y);
     }
 }

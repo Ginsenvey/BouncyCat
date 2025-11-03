@@ -41,8 +41,8 @@
                 <DataTemplate x:DataType="obj:NavigationItem">
                     <NavigationViewItem Width="76" HorizontalContentAlignment="Right" Tag="{Binding Tag,Mode=OneWay}" >
                         <StackPanel Orientation="Vertical"  Width="39" Height="67" >
-                            <ic:SymbolIcon Symbol="{Binding IconSymbol}" FontSize="20" Margin="5" HorizontalAlignment="Center"  Foreground="{ThemeResource AccentAAFillColorDefaultBrush}" IconVariant="{Binding IsSelected,Converter={StaticResource VariantConverter},Mode=OneWay}"></ic:SymbolIcon>
-                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" Margin="5" FontSize="12"></TextBlock>
+                            <ic:SymbolIcon Symbol="{Binding IconSymbol}" FontSize="20" Margin="5" HorizontalAlignment="Center"  Foreground="{Binding IsSelected,Converter={StaticResource ForegroundConverter}}" IconVariant="{Binding IsSelected,Converter={StaticResource VariantConverter},Mode=OneWay}"></ic:SymbolIcon>
+                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" Margin="5" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"></TextBlock>
                         </StackPanel>
                     </NavigationViewItem>
                 </DataTemplate>
@@ -51,7 +51,7 @@
                 <DataTemplate x:DataType="obj:NavigationItem">
                     <NavigationViewItem Width="76" HorizontalContentAlignment="Right" Tag="{Binding Tag,Mode=OneWay}" >
                         <StackPanel Orientation="Vertical"  Width="39" Height="67" >
-                            <ic:SymbolIcon Symbol="{Binding IconSymbol}" FontSize="20" Margin="5" HorizontalAlignment="Center"  Foreground="{ThemeResource AccentAAFillColorDefaultBrush}" IconVariant="{Binding IsSelected,Converter={StaticResource VariantConverter},Mode=OneWay}"></ic:SymbolIcon>
+                            <ic:SymbolIcon Symbol="{Binding IconSymbol}" FontSize="20" Margin="5" HorizontalAlignment="Center"  Foreground="{Binding IsSelected,Converter={StaticResource ForegroundConverter}}" IconVariant="{Binding IsSelected,Converter={StaticResource VariantConverter},Mode=OneWay}"></ic:SymbolIcon>
                             <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" Margin="5" FontSize="12"></TextBlock>
                         </StackPanel>
                     </NavigationViewItem>

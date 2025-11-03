@@ -14,16 +14,71 @@
     xmlns:ry="using:Richasy.WinUIKernel.Share.Base"
     xmlns:vm="using:BouncyCat.ViewModels"
     xmlns:base="using:Richasy.WinUIKernel.Share.Base"
-    xmlns:blur="using:BlurGradient"
+    xmlns:blur="using:LinearGradientBlurEffect"
     Background="{ThemeResource DesktopAcrylicTransparentBrush}"
     mc:Ignorable="d">
 
-    <SplitView x:Name="Wrapper" PanePlacement="Right" DisplayMode="Overlay" IsPaneOpen="False"  PaneBackground="Transparent">
+    <SplitView x:Name="Wrapper" PanePlacement="Right" DisplayMode="Overlay" IsPaneOpen="{x:Bind ViewModel.IsPaneOpen,Mode=TwoWay}"  PaneBackground="Transparent" OpenPaneLength="370">
         <SplitView.Pane>
-            <Grid  Margin="15" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" CornerRadius="12">
-
-                <TextBlock Text="测试" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-            </Grid>
+            <ScrollViewer Margin="15" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" CornerRadius="12" Padding="20">
+                <StackPanel Orientation="Vertical" Spacing="20">
+                    <Grid ColumnSpacing="8" RowSpacing="6">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Width="46" Height="46" VerticalAlignment="Center"  BorderThickness="0" CornerRadius="4">
+                            <Image Source="/Assets/cyberpunk.png"></Image>
+                        </Border>
+                        <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" Text="赛博朋克2077" FontWeight="Bold" HorizontalAlignment="Left"></TextBlock>
+                        <Border Grid.Row="0" Grid.Column="1"  BorderBrush="Transparent" HorizontalAlignment="Right" Background="Pink" Width="50" Height="24" CornerRadius="4" Opacity="0.4">
+                            <TextBlock  Text="AD516" FontSize="11" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0"></TextBlock>
+                        </Border>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="Cyberpunk 2077" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"></TextBlock>
+                        <HyperlinkButton Grid.Row="0" Grid.Column="2" Padding="4">
+                            <ic:SymbolIcon Symbol="MoreHorizontal" FontSize="14"></ic:SymbolIcon>
+                        </HyperlinkButton>
+                    </Grid>
+                    <TextBlock  Text="v1.8|容量4GB|官方简体中文|2025年08月08日更新" FontSize="13" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"></TextBlock>
+                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Stretch">
+                        <Button  Style="{ThemeResource AccentButtonStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <ic:SymbolIcon Symbol="Cloud" FontSize="17"></ic:SymbolIcon>
+                                <TextBlock Text="阿里云"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button  Style="{ThemeResource AccentButtonStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <ic:SymbolIcon Symbol="Cloud" FontSize="17"></ic:SymbolIcon>
+                                <TextBlock Text="夸克"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button  Style="{ThemeResource AccentButtonStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <ic:SymbolIcon Symbol="ArrowDownload" FontSize="15"></ic:SymbolIcon>
+                                <TextBlock Text="在线源"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    <Grid VerticalAlignment="Stretch" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"  BorderThickness="1" CornerRadius="4" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="1"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"  Text="游戏截图" FontWeight="SemiBold" Margin="15,10,15,10"></TextBlock>
+                        <HyperlinkButton Grid.Row="0" HorizontalAlignment="Right" Padding="4" Margin="0,0,5,0">
+                            <ic:SymbolIcon Symbol="ChevronRight"></ic:SymbolIcon>
+                        </HyperlinkButton>
+                        <Border Grid.Row="1" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="1"></Border>
+                    </Grid> 
+                </StackPanel>
+            </ScrollViewer>
 
         </SplitView.Pane>
         <SplitView.Content>
@@ -38,7 +93,11 @@
                 </Grid.ColumnDefinitions>
                 
                 <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="1" BorderThickness="1" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"></Border>
-
+                <Border Grid.Row="0" Grid.Column="0" Width="1" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="{ThemeResource DividerStrokeColorDefaultBrush}">
+                    <Border.RenderTransform>
+                        <TranslateTransform X="6.5" Y="0"></TranslateTransform>
+                    </Border.RenderTransform>
+                </Border>
                 <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="搜索筛选" FontWeight="Bold" Margin="15,0,0,0" x:Name="Title"></TextBlock>
                 <Grid Grid.Row="1" Grid.Column="0" RowSpacing="10" x:Name="SectionArea">
                     <Grid.RowDefinitions>
@@ -47,7 +106,7 @@
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Vertical" Spacing="5">
-                        <tool:RangeSelector RangeStart="2" RangeEnd="4" Minimum="0" Maximum="5" StepFrequency="1" Margin="10"></tool:RangeSelector>
+                        <tool:RangeSelector HorizontalAlignment="Stretch" RangeStart="{x:Bind ViewModel.RangeStart,Mode=TwoWay}" RangeEnd="{x:Bind ViewModel.RangeEnd,Mode=TwoWay}" Minimum="0" Maximum="5" StepFrequency="1" Margin="16,10,10,0" ValueChanged="RangeSelector_ValueChanged"></tool:RangeSelector>
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="热度范围2-4" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"></TextBlock>
                     </StackPanel>
                     <Border Grid.Row="1"  VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="1" BorderThickness="1" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"></Border>
@@ -63,7 +122,7 @@
                                                 <ColumnDefinition Width="*"></ColumnDefinition>
                                                 <ColumnDefinition Width="30"></ColumnDefinition>
                                             </Grid.ColumnDefinitions>
-                                            <CheckBox Grid.Column="0" IsChecked="False"></CheckBox>
+                                            <CheckBox Grid.Column="0" IsChecked="{Binding Pinned,Mode=TwoWay}" x:Name="SectionPicker" Checked="SectionPicker_Checked" Unchecked="SectionPicker_Unchecked"></CheckBox>
 
                                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
                                                 <TextBlock VerticalAlignment="Center" Text="{Binding Name,Mode=OneWay}" FontSize="13"></TextBlock>
@@ -78,12 +137,16 @@
                     </ScrollViewer>
 
                 </Grid>
-                <Grid Grid.Row="0" Grid.Column="2" x:Name="FilterArea">
-                    <ToggleButton  x:Name="st" Checked="st_Checked" Content="开关" Margin="15,0,0,0"></ToggleButton>
-                    <ComboBox  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,0,15,0" PlaceholderText="最近更新"></ComboBox>
+                <Grid Grid.Row="0" Grid.Column="1" x:Name="FilterArea">
+                    <ComboBox  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,0,35,0" PlaceholderText="默认排序" SelectedIndex="{x:Bind ViewModel.Order,Mode=TwoWay}" x:Name="OrderController" SelectionChanged="OrderController_SelectionChanged">
+                        <ComboBoxItem Content="默认排序"></ComboBoxItem>
+                        <ComboBoxItem Content="更新时间"></ComboBoxItem>
+                        <ComboBoxItem Content="发行时间"></ComboBoxItem>
+                        <ComboBoxItem Content="存储容量"></ComboBoxItem>
+                    </ComboBox>
                 </Grid>
 
-                <Grid Grid.Row="1" Grid.Column="2">
+                <Grid Grid.Row="1" Grid.Column="1">
                     <ScrollViewer  x:Name="ContentArea">
                         <ItemsRepeater  x:Name="GameList" ItemsSource="{x:Bind ViewModel.Games}" Margin="30" Loaded="GameList_Loaded">
                             <ItemsRepeater.Layout>
@@ -91,27 +154,26 @@
                             </ItemsRepeater.Layout>
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="obj:Game">
-                                    <Button BorderThickness="0" CornerRadius="6" Padding="0" Width="260" Height="160">
-                                        <Grid CornerRadius="6">
-                                            <blur:LinearGradientBlurPanel StartPoint="0,1" EndPoint="0,0.1" MaxBlurAmount="6" MinBlurAmount="0">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="120"></RowDefinition>
-                                                    <RowDefinition Height="Auto"></RowDefinition>
-                                                </Grid.RowDefinitions>
-                                                <Image Grid.Row="0" Source="{x:Bind Url,Mode=OneWay}" Stretch="Fill" Height="120"></Image>
-                                                <Image Grid.Row="1" Source="{x:Bind Url,Mode=OneWay}" Stretch="Fill" RenderTransformOrigin="0.5,0.5" Height="110">
-                                                    <Image.RenderTransform>
-                                                        <TransformGroup>
-                                                            <ScaleTransform ScaleY="-1" />
-                                                            <TranslateTransform Y="0" />
-                                                        </TransformGroup>
-                                                    </Image.RenderTransform>
-                                                </Image>
+                                    <Button x:Name="ContentCard" BorderThickness="0" CornerRadius="6" Padding="0" Click="ContentCard_Click" >
+                                        <Grid CornerRadius="6" Width="300" Height="200">
+                                            <blur:LinearGradientBlurPanel EndPoint="0,0.5" StartPoint="0,1" MaxBlurAmount="4" >
+                                                <StackPanel Orientation="Vertical" Width="300" Height="200">
+                                                    <Image  Source="{x:Bind Url,Mode=OneWay}" Stretch="Uniform" Width="300" Height="140" ImageFailed="Image_ImageFailed"></Image>
+                                                    <Image  Source="{x:Bind Url,Mode=OneWay}" Stretch="Uniform" RenderTransformOrigin="0.5,0.5" Width="300" Height="140">
+                                                        <Image.RenderTransform>
+                                                            <TransformGroup>
+                                                                <ScaleTransform ScaleY="-1" />
+                                                                <TranslateTransform Y="0" />
+                                                            </TransformGroup>
+                                                        </Image.RenderTransform>
+                                                    </Image>
+                                                </StackPanel>
                                             </blur:LinearGradientBlurPanel>
-                                            <TextBlock  Text="{x:Bind Name,Mode=OneWay}" Foreground="White" FontWeight="Bold"  VerticalAlignment="Bottom" Margin="10"></TextBlock>
+                                            <Border  Height="60" VerticalAlignment="Bottom">
+                                                <TextBlock  Text="{x:Bind Name,Mode=OneWay}" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"  Margin="20,10,10,10"></TextBlock>
+                                            </Border>
                                         </Grid>
                                     </Button>
-                                   
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
@@ -123,7 +185,6 @@
                         <base:VisibilityToggleButton Margin="0,0,-32,0" VerticalAlignment="Stretch" CornerRadius="0,6,6,0" AlwaysShowWhenCollapsed="True" IsEnabled="True" ShowTip="折叠" HideTip="展开" Click="Btn_Click" />
                     </Grid>
                 </Grid>
-
             </Grid>
         </SplitView.Content>
     </SplitView>

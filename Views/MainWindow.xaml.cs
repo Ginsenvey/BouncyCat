@@ -1,6 +1,7 @@
 using BouncyCat.Objects;
 using BouncyCat.Services;
 using BouncyCat.ViewModels;
+using CommunityToolkit.Mvvm.Messaging;
 using FluentIcons.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
@@ -81,8 +82,10 @@ namespace BouncyCat.Views
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
+
                 var Text = sender.Text.ToLower();
-                await ViewModel.ExecuteSearch(Text);
+                //await ViewModel.ExecuteSearch(Text);
+                WeakReferenceMessenger.Default.Send(Text);
 
             }
         }

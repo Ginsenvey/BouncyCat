@@ -92,4 +92,9 @@ public class Data
 
     public string MageA { get; set; }
     public string BiaoQ {  get; set; }
+
+    public string XingJ {  get; set; }
+    public string RiQ {  get; set; }
+    public string FXRiQ {  get; set; }
+    public string RongL {  get; set; }
 }

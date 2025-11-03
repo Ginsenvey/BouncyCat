@@ -66,3 +66,31 @@ public sealed partial class BoolToVisibilityReverseConverter : IValueConverter
     /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, string language) => throw new NotImplementedException();
 }
+
+public class BoolToForegroundConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is bool isSelected)
+        {
+            if (isSelected)
+            {
+                // 选中状态：使用 AccentAAFillColorDefaultBrush
+                return Application.Current.Resources["AccentAAFillColorDefaultBrush"];
+            }
+            else
+            {
+                // 未选中状态：使用 TextFillColorSecondaryBrush
+                return Application.Current.Resources["TextFillColorSecondaryBrush"];
+            }
+        }
+
+        // 默认情况
+        return Application.Current.Resources["TextFillColorSecondaryBrush"];
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}

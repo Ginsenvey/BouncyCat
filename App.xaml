@@ -14,7 +14,9 @@
                 
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
+            <AcrylicBrush x:Key="AcrylicCardBrush" TintOpacity="0.01" TintColor="Transparent" AlwaysUseFallback="False"/>
             <!-- Other app resources here -->
+            <local:BoolToForegroundConverter x:Key="ForegroundConverter"></local:BoolToForegroundConverter>
             <local:BooltoVariantConverter x:Key="VariantConverter"></local:BooltoVariantConverter>
             <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <local:BoolToVisibilityReverseConverter x:Key="BoolToVisibilityReverseConverter"/>
