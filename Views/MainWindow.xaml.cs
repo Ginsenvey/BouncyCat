@@ -82,10 +82,16 @@ namespace BouncyCat.Views
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-
                 var Text = sender.Text.ToLower();
-                //await ViewModel.ExecuteSearch(Text);
                 WeakReferenceMessenger.Default.Send(Text);
+                if(RootFrame.Content is Discover discover)
+                {
+                    return;
+                }
+                else
+                {
+                    await ViewModel.ExecuteSearch(Text);
+                }
 
             }
         }
