@@ -73,6 +73,18 @@ public partial class Game : ObservableObject
 
     [ObservableProperty]
     private string name;
+
+    [ObservableProperty]
+    private string firstTag;
+
+    [ObservableProperty]
+    private string size;
+
+    [ObservableProperty]
+    private string rank;
+
+    [ObservableProperty]
+    private string code;
 }
 
 public class UpdateInfo

@@ -75,14 +75,11 @@ public sealed partial class DiscoverViewModel : ObservableObject
     }
     public void LoadSection()
     {
-        var section_info = AllData.Where(d => !string.IsNullOrEmpty(d.BiaoQ)).GroupBy(d => d.BiaoQ).Select(g => new GameSection
-        {
-            Name = g.Key,
-            Count = g.Count(),
-            Pinned = false
-        })
-        .OrderByDescending(x => x.Count).ToList();
-        foreach(var section in section_info)
+        var section_info = AllData.Where(d => !string.IsNullOrEmpty(d.BiaoQ)).SelectMany(d=>d.BiaoQ.Split(".", StringSplitOptions.RemoveEmptyEntries)).GroupBy(tag => tag)
+        .Select(g => new GameSection {  Name = g.Key, Count = g.Count(),Pinned=false })
+        .OrderByDescending(x => x.Count)
+        .ThenBy(x => x.Name);
+        foreach (var section in section_info)
         {
             Sections.Add(section);
         }
@@ -96,7 +93,7 @@ public sealed partial class DiscoverViewModel : ObservableObject
         return FilteredData
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(d => new Game { Name = d.Name1, Url = d.MageA })
+            .Select(d => new Game { Name = d.Name1, Url = d.MageA, FirstTag = d.BiaoQ.Split(".")[0],Size="12GB",Rank=d.XingJ,Code=d.BH })
             .ToList();
     }
     [RelayCommand]
@@ -125,7 +122,10 @@ public sealed partial class DiscoverViewModel : ObservableObject
 
         if (SelectedSections.Count>0)
         {
-            filtered = filtered.Where(d => SelectedSections.Contains(d.BiaoQ));
+            filtered = filtered.Where(d =>{
+                var tags = d.BiaoQ.Split(".", StringSplitOptions.RemoveEmptyEntries).ToList();
+                return tags.Intersect(SelectedSections).Any();
+            });
         }
 
 
@@ -166,9 +166,9 @@ public sealed partial class DiscoverViewModel : ObservableObject
         Games.Clear();
         FilteredData.Clear();
         FilteredData.AddRange(NewData);
-        foreach (var item in FilteredData)
+        foreach (var d in FilteredData)
         {
-            Games.Add(new Game { Name=item.Name1,Url=item.MageA});
+            Games.Add(new Game {Name = d.Name1, Url = d.MageA, FirstTag = d.BiaoQ.Split(".")[0], Size = d.RongL, Rank = d.XingJ, Code = d.BH });
         }
 
     }

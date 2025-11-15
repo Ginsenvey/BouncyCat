@@ -14,7 +14,7 @@
     xmlns:ry="using:Richasy.WinUIKernel.Share.Base"
     xmlns:vm="using:BouncyCat.ViewModels"
     xmlns:base="using:Richasy.WinUIKernel.Share.Base"
-    xmlns:blur="using:LinearGradientBlurEffect"
+    xmlns:blur="using:BouncyCat.Controls.LinearGradientBlurEffect"
     Background="{ThemeResource DesktopAcrylicTransparentBrush}"
     mc:Ignorable="d">
 
@@ -138,7 +138,7 @@
 
                 </Grid>
                 <Grid Grid.Row="0" Grid.Column="1" x:Name="FilterArea">
-                    <ComboBox  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,0,35,0" PlaceholderText="默认排序" SelectedIndex="{x:Bind ViewModel.Order,Mode=TwoWay}" x:Name="OrderController" SelectionChanged="OrderController_SelectionChanged">
+                    <ComboBox  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,0,30,0" PlaceholderText="默认排序" SelectedIndex="{x:Bind ViewModel.Order,Mode=TwoWay}" x:Name="OrderController" SelectionChanged="OrderController_SelectionChanged">
                         <ComboBoxItem Content="默认排序"></ComboBoxItem>
                         <ComboBoxItem Content="更新时间"></ComboBoxItem>
                         <ComboBoxItem Content="发行时间"></ComboBoxItem>
@@ -148,32 +148,61 @@
 
                 <Grid Grid.Row="1" Grid.Column="1">
                     <ScrollViewer  x:Name="ContentArea">
-                        <ItemsRepeater  x:Name="GameList" ItemsSource="{x:Bind ViewModel.Games}" Margin="30" Loaded="GameList_Loaded">
+                        <ItemsRepeater  x:Name="GameList" ItemsSource="{x:Bind ViewModel.Games}" Margin="30" Loaded="GameList_Loaded" ElementPrepared="GamesItemsRepeater_ElementPrepared" ElementClearing="GamesItemsRepeater_ElementClearing">
                             <ItemsRepeater.Layout>
                                 <tool:StaggeredLayout ColumnSpacing="15" RowSpacing="20" ItemsStretch="Fill"></tool:StaggeredLayout>
                             </ItemsRepeater.Layout>
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="obj:Game">
-                                    <Button x:Name="ContentCard" BorderThickness="0" CornerRadius="6" Padding="0" Click="ContentCard_Click" >
-                                        <Grid CornerRadius="6" Width="300" Height="200">
-                                            <blur:LinearGradientBlurPanel EndPoint="0,0.5" StartPoint="0,1" MaxBlurAmount="4" >
-                                                <StackPanel Orientation="Vertical" Width="300" Height="200">
-                                                    <Image  Source="{x:Bind Url,Mode=OneWay}" Stretch="Uniform" Width="300" Height="140" ImageFailed="Image_ImageFailed"></Image>
-                                                    <Image  Source="{x:Bind Url,Mode=OneWay}" Stretch="Uniform" RenderTransformOrigin="0.5,0.5" Width="300" Height="140">
-                                                        <Image.RenderTransform>
-                                                            <TransformGroup>
-                                                                <ScaleTransform ScaleY="-1" />
-                                                                <TranslateTransform Y="0" />
-                                                            </TransformGroup>
-                                                        </Image.RenderTransform>
-                                                    </Image>
-                                                </StackPanel>
-                                            </blur:LinearGradientBlurPanel>
-                                            <Border  Height="60" VerticalAlignment="Bottom">
-                                                <TextBlock  Text="{x:Bind Name,Mode=OneWay}" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"  Margin="20,10,10,10"></TextBlock>
-                                            </Border>
+                                    <Grid x:Name="ItemRoot" CornerRadius="8" MaxWidth="460"  Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                                        <Grid x:Name="LoadingStateGrid">
+                                            <lab:Shimmer IsActive="True" />
+                                            <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="15,0,0,7" Spacing="5">
+                                                <lab:Shimmer Height="18" Width="150" CornerRadius="4" />
+                                                <lab:Shimmer Height="14" Width="250" CornerRadius="4" />
+                                            </StackPanel>
                                         </Grid>
-                                    </Button>
+                                        <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
+                                            <Grid Width="460" Height="215">
+                                                <Border x:Name="ImageContainer" Background="Transparent">
+                                                    <Border.BackgroundTransition>
+                                                        <BrushTransition/>
+                                                    </Border.BackgroundTransition>
+                                                </Border>
+
+                                                <Rectangle  x:Name="GradientOverlay" Opacity="1" Visibility="Collapsed">
+                                                    <Rectangle.Fill>
+                                                        <LinearGradientBrush StartPoint="0.5,0.6" EndPoint="0.5,1">
+                                                            <GradientStop Color="#00000000" Offset="0" />
+                                                            <GradientStop Color="#55000000" Offset="1" />
+                                                        </LinearGradientBrush>
+                                                    </Rectangle.Fill>
+                                                </Rectangle>
+                                            </Grid>
+                                        </Viewbox>
+                                        <Grid x:Name="ErrorIndicator" Background="#80000000" Visibility="Collapsed">
+                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4">
+                                                <TextBlock Text="😱" FontSize="24" HorizontalAlignment="Center" />
+                                                <TextBlock Text="图片加载失败" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <blur:LinearGradientBlurPanel x:Name="EffectsBlurPanel" Height="60" MaxBlurAmount="5" EndPoint="0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Visibility="Collapsed" />
+
+                                        <StackPanel x:Name="TextContentPanel" Opacity="0" Orientation="Horizontal" Margin="10,0,0,7" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                            <StackPanel Margin="5,0,0,0">
+                                                <TextBlock Text="{x:Bind Name}" Opacity="0.9" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Left" MaxWidth="200" TextTrimming="CharacterEllipsis" />
+                                                <StackPanel Orientation="Horizontal" Margin="0,2,0,0" Opacity="0.7">
+                                                    <TextBlock Text="{x:Bind FirstTag}" Foreground="White" />
+                                                    <TextBlock Margin="2,0,2,0" Text="•" Foreground="White" Opacity="0.7" />
+                                                    <TextBlock Text="📁" Foreground="White" />
+                                                    <TextBlock Text="{x:Bind Size}" Foreground="White" />
+                                                    <TextBlock Margin="2,0,2,0" Text="•" Foreground="White" Opacity="0.7" />
+                                                    <TextBlock Margin="0,0,0,0" Text="💖" />
+                                                    <TextBlock Text="{x:Bind Rank}" Foreground="White" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
