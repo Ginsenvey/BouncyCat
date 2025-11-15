@@ -83,6 +83,22 @@
         </SplitView.Pane>
         <SplitView.Content>
             <Grid x:Name="RootGrid">
+                <Grid.Resources>
+                    <Storyboard x:Name="CollapseAnimation">
+                        <DoubleAnimation Storyboard.TargetName="LeftColumn" 
+                        Storyboard.TargetProperty="MinWidth"
+                        To="0" 
+                        Duration="0:0:0.3"
+                        EnableDependentAnimation="True"/>
+                    </Storyboard>
+                    <Storyboard x:Name="ExpandAnimation">
+                        <DoubleAnimation Storyboard.TargetName="LeftColumn" 
+                        Storyboard.TargetProperty="MinWidth"
+                        To="300"  
+                        Duration="0:0:0.3"
+                        EnableDependentAnimation="True"/>
+                    </Storyboard>
+                </Grid.Resources>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" MinHeight="60"></RowDefinition>
                     <RowDefinition Height="12*"></RowDefinition>
@@ -115,7 +131,6 @@
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="obj:GameSection">
                                     <HyperlinkButton BorderThickness="0" CornerRadius="0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
-                                        
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="30"></ColumnDefinition>
@@ -148,7 +163,7 @@
 
                 <Grid Grid.Row="1" Grid.Column="1">
                     <ScrollViewer  x:Name="ContentArea">
-                        <ItemsRepeater  x:Name="GameList" ItemsSource="{x:Bind ViewModel.Games}" Margin="30" Loaded="GameList_Loaded" ElementPrepared="GamesItemsRepeater_ElementPrepared" ElementClearing="GamesItemsRepeater_ElementClearing">
+                        <ItemsRepeater  x:Name="GameList" ItemsSource="{x:Bind ViewModel.Games}" Margin="15" Loaded="GameList_Loaded" ElementPrepared="GamesItemsRepeater_ElementPrepared" ElementClearing="GamesItemsRepeater_ElementClearing">
                             <ItemsRepeater.Layout>
                                 <tool:StaggeredLayout ColumnSpacing="15" RowSpacing="20" ItemsStretch="Fill"></tool:StaggeredLayout>
                             </ItemsRepeater.Layout>

@@ -46,16 +46,17 @@ namespace BouncyCat.Views
         {
             if (Expanded)
             {
-                Title.Visibility = Visibility.Collapsed;
+                Grid.SetColumn(Title, 1);
                 SectionArea.Visibility = Visibility.Collapsed;
-                LeftColumn.MinWidth = 0;
                 LeftColumn.Width = new GridLength(0, GridUnitType.Pixel);
+                CollapseAnimation.Begin();
             }
             else
             {
-                Title.Visibility = Visibility.Visible;
+                Grid.SetColumn(Title, 0);
                 SectionArea.Visibility = Visibility.Visible;
                 LeftColumn.Width = new GridLength(2, GridUnitType.Star);
+                ExpandAnimation.Begin();
             }
             ViewModel.Expanding(Expanded);
             Expanded = !Expanded;
@@ -156,22 +157,22 @@ namespace BouncyCat.Views
             container.Tag = imageBrush;
         }
         private void GamesItemsRepeater_ElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
+    {
+        var container = args.Element as Grid;
+        if (container == null) return;
+        var imageBrush = container.Tag as ImageBrush;
+        if (imageBrush?.ImageSource is BitmapImage bitmapImage)
         {
-            var container = args.Element as Grid;
-            if (container == null) return;
-            var imageBrush = container.Tag as ImageBrush;
-            if (imageBrush?.ImageSource is BitmapImage bitmapImage)
-            {
-                bitmapImage.UriSource = null;
-            }
-
-            if (container.FindName("ImageContainer") is Border imageContainer)
-            {
-                imageContainer.Background = null;
-            }
-
-            container.Tag = null;
+            bitmapImage.UriSource = null;
         }
+         
+        if (container.FindName("ImageContainer") is Border imageContainer)
+        {
+            imageContainer.Background = null;
+        }
+
+        container.Tag = null;
+    }
         private void RangeSelector_ValueChanged(object sender, CommunityToolkit.WinUI.Controls.RangeChangedEventArgs e)
         {
             ViewModel.ApplyFilters(1);
