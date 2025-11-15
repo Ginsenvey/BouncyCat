@@ -1,4 +1,5 @@
 using BouncyCat.Messengers;
+using BouncyCat.Objects;
 using BouncyCat.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -180,6 +181,10 @@ namespace BouncyCat.Views
 
         private void SectionPicker_Checked(object sender, RoutedEventArgs e)
         {
+            var s = (sender as CheckBox)?.DataContext as GameSection;
+            if (s == null) return;
+            ViewModel.Sections.Remove(s);
+            ViewModel.Sections.Insert(0, s);
             ViewModel.UpdateSectionPicker();
         }
 

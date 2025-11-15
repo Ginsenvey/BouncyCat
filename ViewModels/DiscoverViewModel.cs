@@ -174,7 +174,7 @@ public sealed partial class DiscoverViewModel : ObservableObject
     }
     //更新所选分区的缓存列表。
     public void UpdateSectionPicker()
-    {
+    {   
         List<string> NewSelectedSections=Sections.Where(s=>s.Pinned).Select(s=>s.Name).ToList();
         SelectedSections.Clear();
         SelectedSections.AddRange(NewSelectedSections);

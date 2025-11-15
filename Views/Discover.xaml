@@ -130,7 +130,7 @@
                         <ItemsRepeater  x:Name="SectionList" ItemsSource="{x:Bind ViewModel.Sections}">
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="obj:GameSection">
-                                    <HyperlinkButton BorderThickness="0" CornerRadius="0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+                                    <HyperlinkButton BorderThickness="0" CornerRadius="0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" DataContext="{x:Bind}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="30"></ColumnDefinition>
