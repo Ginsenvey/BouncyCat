@@ -10,6 +10,7 @@
     mc:Ignorable="d"
     xmlns:obj="using:BouncyCat.Objects"
     xmlns:ic="using:FluentIcons.WinUI"
+    xmlns:tool="using:CommunityToolkit.WinUI.Controls"
     Title="BouncyCat">
 
     <Window.SystemBackdrop>
@@ -24,17 +25,54 @@
 
         <Grid x:Name="GridTitleBar" ColumnSpacing="15">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="160"></ColumnDefinition>
+                <ColumnDefinition Width="210"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="50"></ColumnDefinition>
                 <ColumnDefinition Width="160"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            
+            <ContentDialog x:Name="DownloadDialog" PrimaryButtonText="开始下载" CloseButtonText="取消" Title="下载选项">
+                <StackPanel Orientation="Vertical" Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBox Header="保存至" Width="380"></TextBox>
+                        <Button Content="选择文件夹" VerticalAlignment="Bottom"></Button>
+                    </StackPanel>
+                    <TextBlock Text="保存路径不合法" Foreground="Red"></TextBlock>
+                    <TextBlock Text="高级选项" FontWeight="SemiBold"></TextBlock>
+                    <tool:SettingsCard HeaderIcon="{ic:SymbolIcon Symbol=Copy}" Header="覆盖安装" Description="存在相同文件则删除原内容" >
+                        <ToggleSwitch></ToggleSwitch>
+                    </tool:SettingsCard>
+                    <tool:SettingsCard HeaderIcon="{ic:SymbolIcon Symbol=Warning}" Header="校验完整性" Description="检查文件是否损坏" >
+                        <ToggleSwitch></ToggleSwitch>
+                    </tool:SettingsCard>
+                    <tool:SettingsCard HeaderIcon="{ic:SymbolIcon Symbol=Toolbox}" Header="尝试自动安装" Description="" >
+                        <ToggleSwitch></ToggleSwitch>
+                    </tool:SettingsCard>
+                </StackPanel>
+            </ContentDialog>
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="15" Margin="15,0,0,0">
                 <TextBlock  Text="BouncyCat" x:Name="de"  VerticalAlignment="Center" FontSize="15"  FontWeight="SemiBold" ></TextBlock>
                 <ProgressRing  IsActive="{x:Bind ViewModel.IsLoading,Mode=OneWay}"  Width="18" Height="18"></ProgressRing>
             </StackPanel>
             <!--搜索框项容器的类型只能是ListViewItem-->
             <AutoSuggestBox Grid.Column="1" Height="36" MaxWidth="400" MinWidth="200" QueryIcon="Find" HorizontalAlignment="Stretch" UpdateTextOnSelect="False" x:Name="RootSerchBox" TextChanged="RootSerchBox_TextChanged" ItemsSource="{x:Bind ViewModel.Results,Mode=OneWay}" ItemTemplateSelector="{StaticResource SearchResultSelector}"></AutoSuggestBox>
+            <Button Grid.Column="2" CornerRadius="9999" Width="32" Height="32" Padding="0">
+                <Button.Flyout>
+                    <Flyout Placement="Bottom">
+                        <ScrollViewer>
+                            <ItemsRepeater ItemsSource="{x:Bind ViewModel.DownloadingItems,Mode=OneWay}">
+                                <ItemsRepeater.ItemTemplate>
+                                    <DataTemplate x:DataType="obj:DowloadingFile">
+                                        <Grid CornerRadius="4" Height="64" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                                            <TextBlock Text="{x:Bind Name,Mode=OneWay}"></TextBlock>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsRepeater.ItemTemplate>
+                            </ItemsRepeater>
+                        </ScrollViewer>
+                    </Flyout>
+                </Button.Flyout>
+                <ic:SymbolIcon Symbol="ArrowDownload" FontSize="12"></ic:SymbolIcon>
+            </Button>
         </Grid>
         <NavigationView  Grid.Row="1" PaneDisplayMode="Left" IsPaneToggleButtonVisible="False"  OpenPaneLength="74" IsBackButtonVisible="Collapsed" IsSettingsVisible="False"  x:Name="Navi"  CompactPaneLength="0" MenuItemsSource="{x:Bind ViewModel.MenuItems}" FooterMenuItemsSource="{x:Bind ViewModel.FooterItems}" ItemInvoked="Navi_ItemInvoked">
             <NavigationView.MenuItemTemplate>

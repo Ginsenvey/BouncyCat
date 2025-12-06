@@ -1,8 +1,10 @@
-﻿using BouncyCat.Objects;
+﻿using BouncyCat.Core;
+using BouncyCat.Objects;
 using BouncyCat.Services;
 using BouncyCat.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SqlSugar;
@@ -21,6 +23,7 @@ public sealed partial class MainViewModel : ObservableObject
     {
         _nav = nav;
         _updateService = updateService;
+        _ruleProvider = App.Services.GetRequiredService<IDownloadRuleProvider>();
         string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         string path = System.IO.Path.Combine(localAppDataPath, "BouncyCat", "Data.db");
         var db = new SqlSugarClient(new ConnectionConfig()
@@ -34,6 +37,7 @@ public sealed partial class MainViewModel : ObservableObject
     public static HttpClient client=new();
     private readonly INavigationService _nav;
     private readonly IUpdateService _updateService;
+    private readonly IDownloadRuleProvider _ruleProvider;
     public List<Data> GameList { get; set; }
     [ObservableProperty]
     private ObservableCollection<NavigationItem> menuItems = new();
@@ -46,7 +50,8 @@ public sealed partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     private ObservableCollection<SearchIndicator> results=new() ;
-    
+    [ObservableProperty]
+    private ObservableCollection<DowloadingFile> downloadingItems = new();
 
     [ObservableProperty]
     private bool isLoading=true;
@@ -143,4 +148,10 @@ public sealed partial class MainViewModel : ObservableObject
 
     [RelayCommand]
     private void GoBack() => _nav.GoBack();
+    
+
+    private void FileDownloadManager_DownloadProgressChanged(object? sender, DownloadProgressEventArgs e)
+    {
+        Console.WriteLine(e.OverallProgress);
+    }
 }

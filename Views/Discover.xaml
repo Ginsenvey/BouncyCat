@@ -58,7 +58,7 @@
                                 <TextBlock Text="夸克"></TextBlock>
                             </StackPanel>
                         </Button>
-                        <Button  Style="{ThemeResource AccentButtonStyle}">
+                        <Button x:Name="download"  Style="{ThemeResource AccentButtonStyle}" Click="download_Click">
                             <StackPanel Orientation="Horizontal" Spacing="5">
                                 <ic:SymbolIcon Symbol="ArrowDownload" FontSize="15"></ic:SymbolIcon>
                                 <TextBlock Text="在线源"></TextBlock>
@@ -169,7 +169,7 @@
                             </ItemsRepeater.Layout>
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="obj:Game">
-                                    <Grid x:Name="ItemRoot" CornerRadius="8" MaxWidth="460"  Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                                    <Grid x:Name="ItemRoot" CornerRadius="8" MaxWidth="460"  Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Tapped="ItemRoot_Tapped">
                                         <Grid x:Name="LoadingStateGrid">
                                             <lab:Shimmer IsActive="True" />
                                             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="15,0,0,7" Spacing="5">

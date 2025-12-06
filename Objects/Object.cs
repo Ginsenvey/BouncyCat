@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -94,6 +95,52 @@ public class UpdateInfo
     public required string DataBaseVersion { get; set; }
     public required string MD5 { get; set; }
     public bool Status { get; set; }
+}
+public class FileItem
+{
+    [JsonProperty("id")]
+    public string Id { get; set; }
+
+    [JsonProperty("filename")]
+    public string Filename { get; set; }
+
+    [JsonProperty("isFolder")]
+    public bool IsFolder { get; set; }
+
+    [JsonProperty("children")]
+    public List<FileItem> Children { get; set; }
+
+    [JsonProperty("rongliang")]
+    public long? Rongliang { get; set; } // 使用可空类型，因为不是所有节点都有这个属性
+}
+public class DownloadItem
+{
+    public FileItem FileInfo { get; set; }
+    public string DownloadUrl { get; set; }
+    public string LocalPath { get; set; }
+    public long FileSize => FileInfo.Rongliang ?? 0;
+}
+
+public partial class DowloadingFile : ObservableObject
+{
+
+    [ObservableProperty]
+    private string name;
+
+}
+public class DownloadCommand
+{
+    public required string Code { get; set; }
+}
+public class DownloadProgressEventArgs : EventArgs
+{
+    public long TotalBytesDownloaded { get; set; }
+    public long TotalBytesToDownload { get; set; }
+    public double OverallProgress => TotalBytesToDownload > 0 ?
+        (double)TotalBytesDownloaded / TotalBytesToDownload * 100 : 0;
+    public string CurrentFileName { get; set; }
+    public int CurrentFileIndex { get; set; }
+    public int TotalFiles { get; set; }
 }
 public class Data
 {

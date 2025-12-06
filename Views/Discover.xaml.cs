@@ -1,4 +1,3 @@
-using BouncyCat.Messengers;
 using BouncyCat.Objects;
 using BouncyCat.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -210,6 +209,16 @@ namespace BouncyCat.Views
             {
                 i.Source = new BitmapImage(new Uri("ms-appx:///Assets/fail.png"));
             }
+        }
+
+        private void ItemRoot_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ViewModel.OpenInfoPane();
+        }
+
+        private void download_Click(object sender, RoutedEventArgs e)
+        {
+            WeakReferenceMessenger.Default.Send(new DownloadCommand { Code= "3Efii2NNJFbm"});
         }
     }
 }

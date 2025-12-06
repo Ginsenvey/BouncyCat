@@ -1,5 +1,4 @@
 ﻿using BouncyCat.Helpers;
-using BouncyCat.Messengers;
 using BouncyCat.Objects;
 using BouncyCat.Views;
 using CommunityToolkit.Mvvm.ComponentModel;

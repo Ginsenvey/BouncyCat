@@ -19,6 +19,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using WinUIEx.Messaging;
 
 
 namespace BouncyCat.Views
@@ -41,9 +42,20 @@ namespace BouncyCat.Views
             AddNavigationItems();
             nav?.NavigateTo(typeof(Discover));
             ViewModel.InitializeData();
-            
+            WeakReferenceMessenger.Default.Register<DownloadCommand>(this, (recipient, message) => {
+
+                ConfirmDownload(message.Code);
+            });
         }
-        
+        private async void ConfirmDownload(string code)
+        {
+            DownloadDialog.XamlRoot = this.Content.XamlRoot;
+            var r=await DownloadDialog.ShowAsync();
+            if (r == ContentDialogResult.Primary)
+            {
+
+            }
+        }
         private void AddNavigationItems()
         {
             ViewModel.MenuItems.Add(new NavigationItem { Name = "ึ๗าณ",IconSymbol=FluentIcons.Common.Symbol.Home,Tag="home" });
@@ -95,6 +107,7 @@ namespace BouncyCat.Views
 
             }
         }
+
     }
 
     public partial class BooltoVariantConverter : IValueConverter

@@ -58,6 +58,7 @@ namespace BouncyCat
             Services = new ServiceCollection()
             .AddSingleton<INavigationService, NavigationService>()
             .AddSingleton<IUpdateService>(provider => new UpdateService(path))
+            .AddSingleton<IDownloadRuleProvider>(provider=>new DownloadRule("D:/Downloads", "http://203.135.101.43:226/share/url?"))
             .AddTransient<MainViewModel>()
             .AddTransient<DiscoverViewModel>()
             .BuildServiceProvider();

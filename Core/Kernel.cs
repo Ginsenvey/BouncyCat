@@ -83,8 +83,25 @@ public static class RequestSender
             return Info;
         }
     }
-
-
+    public static async Task<string> GetFileJson(string url)
+    {
+        try
+        {
+            var res = await client.GetAsync(url);
+            if (res.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return await res.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                return "404:获取文件信息失败";
+            }
+        }
+        catch(Exception ex)
+        {
+            return $"404:{ex.Message}";
+        }
+    }
 
 }
 
